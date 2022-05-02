@@ -11,7 +11,11 @@ function setup() {
   noCanvas();
   button = createButton('RUN CODE');
   button.mousePressed(function () {
-    transpile(AST['0']);
+    let arr = [];
+    for (let i = 0; i < AST['0'].values.length; i++) {
+      arr.push(AST['0'].values[i]);
+    }
+    transpile(arr);
   });
 }
 
@@ -19,13 +23,20 @@ function draw() {}
 
 function transpile(code) {
   console.log('RUNNING CODE!');
-  if (code.type === 'playnote') {
-    osc = new p5.Oscillator(code.values[0]);
-    osc.freq(code.values[1]);
+  let timer = code[0][2] * 100;
+  if (code.length > 0) {
+    osc = new p5.Oscillator(code[0][0]);
+    osc.freq(code[0][1]);
     osc.start();
     setTimeout(function () {
       osc.stop();
-      osc.disconnect();
-    }, code.values[2] * 100);
+      // let next = code.shift();
+      // transpile(next);
+    }, timer);
+  } else {
   }
 }
+
+
+
+text -> lexer -> tokens -> nearley /grammar -> AST abstract syntax tree -> transpiler -> javascript

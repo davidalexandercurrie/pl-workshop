@@ -17,9 +17,11 @@ function id(x) { return x[0]; }
 var grammar = {
     Lexer: lexer,
     ParserRules: [
-    {"name": "main", "symbols": ["_", "Statement", "_"], "postprocess": 
+    {"name": "main", "symbols": ["_", "Statements", "_"], "postprocess": 
         function(d){ return { type: 'playnote', values: d[1] } }
         },
+    {"name": "Statements", "symbols": ["Statement"], "postprocess": (d) => [d[0]]},
+    {"name": "Statements", "symbols": ["Statement", "_", "Statements"], "postprocess": (d) => [d[0], d[2]]},
     {"name": "Statement", "symbols": ["Waveform", "__", (lexer.has("number") ? {type: "number"} : number), "__", "time"], "postprocess": function(d){ return [d[0].type, parseInt(d[2].value), d[4].value.length] }},
     {"name": "Waveform", "symbols": [(lexer.has("sine") ? {type: "sine"} : sine)], "postprocess": id},
     {"name": "Waveform", "symbols": [(lexer.has("saw") ? {type: "saw"} : saw)], "postprocess": id},

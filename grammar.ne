@@ -46,12 +46,14 @@
 @lexer lexer
 
 # Grammar definition in the Extended Backus Naur Form (EBNF)
-main -> _ Statement _
+main -> _ Statements _
 {%
   function(d){ return { type: 'playnote', values: d[1] } }
 %}
 
-Statement -> Waveform __ %number __ time {% function(d){ return [d[0].type, parseInt(d[2].value), d[4].value.length] } %}
+Statements -> Statement {% (d) => [d[0]] %} | Statement _ Statements {% (d) => [d[0], d[2]] %}
+
+Statement -> Waveform __ %number __ time {% function(d){ return [d[0].type, parseInt(d[2].value), d[4].value.length] } %} 
 
 Waveform -> %sine {% id %} | %saw {% id %} | %square {% id %}
 
@@ -62,3 +64,9 @@ __ -> wschar:+ {% d => null %}
 wschar -> %ws {% id %}
 
 time -> %time {% id %} | %time time 
+
+
+
+
+
+
